@@ -1,100 +1,130 @@
-import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import React, { useEffect, useState } from "react";
+import {
+  createFileRoute,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Droplet, Edit, LogOut, Plus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/editPage")({
-  component: Home,
+  component: EditPage,
 });
 
-type Plant = {
-  name: string;
-  description: string;
-  image: string;
-  moisture: string;
-  requiredMoisture: string;
-};
+function EditPage() {
+  const navigate = useNavigate();
+  const { index }: { index: string } = useParams({ strict: false }); // this gets the index from the URL
+  const plantIndex = parseInt(index);
 
-function Home() {
-  const [plants, setPlants] = useState<Plant[]>([]);
+  const [plantName, setPlantName] = useState("");
+  const [plantDescription, setPlantDescription] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [existingImage, setExistingImage] = useState<string>("");
+  const [moisture, setMoisture] = useState("");
+  const [requiredMoisture, setRequiredMoisture] = useState("");
 
   useEffect(() => {
-    const saved = localStorage.getItem("plants");
-    if (saved) {
-      setPlants(JSON.parse(saved));
+    const plants = JSON.parse(localStorage.getItem("plants") || "[]");
+    const plant = plants[plantIndex];
+
+    if (plant) {
+      setPlantName(plant.name);
+      setPlantDescription(plant.description);
+      setMoisture(plant.moisture);
+      setRequiredMoisture(plant.requiredMoisture);
+      setExistingImage(plant.image);
     }
-  }, []);
+  }, [plantIndex]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const plants = JSON.parse(localStorage.getItem("plants") || "[]");
+
+    const updatePlant = (image: string) => {
+      plants[plantIndex] = {
+        name: plantName,
+        description: plantDescription,
+        moisture,
+        requiredMoisture,
+        image,
+      };
+
+      localStorage.setItem("plants", JSON.stringify(plants));
+      navigate({ to: "/home" });
+    };
+
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        updatePlant(reader.result as string);
+      };
+      reader.readAsDataURL(imageFile);
+    } else {
+      updatePlant(existingImage);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate({ to: "/home" });
+  };
 
   return (
     <>
-      <div className="flex justify-between items-center ">
-        <div className="flex gap-5 items-center">
-          <img src="image.webp" className="h-12" alt="User Avatar" />
-          <p className="text-2xl">Cześć, IMIĘ!</p>
-        </div>
-        <Button className="text-2xl">
-          Wyloguj <LogOut />
-        </Button>
-      </div>
+      <div className="max-w-xl mx-auto mt-10">
+        <h2 className="text-3xl font-bold mb-6">Edytuj roślinę</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <div>
+            <Label>Nazwa rośliny</Label>
+            <Input
+              value={plantName}
+              onChange={(e) => setPlantName(e.target.value)}
+              required
+            />
+          </div>
 
-      <div className="mt-8 flex items-center">
-        <h6 className="text-2xl">Twoje rośliny</h6>
-        <Button className="ml-auto text-xl" size="lg" asChild>
-          <Link to="/editPage">
-            <Plus className="mr-2" />
-            Nowa roślina
-          </Link>
-        </Button>
-      </div>
+          <div>
+            <Label>Opis</Label>
+            <textarea
+              value={plantDescription}
+              onChange={(e) => setPlantDescription(e.target.value)}
+              placeholder="Napisz coś o tej roślinie..."
+              required
+              className="border rounded p-2 w-full min-h-[100px] bg-white"
+            />
+          </div>
 
-      <div className="mt-4 flex flex-col md:flex-row flex-wrap gap-4">
-        {plants.map((plant, index) => {
-          const moisture = parseInt(plant.moisture);
-          const required = parseInt(plant.requiredMoisture);
-          const needsWater = moisture < required;
+          <div>
+            <Label>Zdjęcie rośliny</Label>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+            />
+            {!imageFile && existingImage && (
+              <img
+                src={existingImage}
+                alt="Obecne zdjęcie"
+                className="mt-2 h-32 object-cover rounded"
+              />
+            )}
+          </div>
 
-          return (
-            <Card key={index} className="flex flex-col p-0 w-full md:w-[300px]">
-              <div className="relative w-full">
-                <img
-                  src={plant.image}
-                  className="object-cover h-60 w-full rounded-t-xl"
-                  alt={`Zdjęcie ${plant.name}`}
-                />
-                {needsWater && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute -bottom-4.5 right-4.5"
-                  >
-                    😭 Podlej mnie!
-                  </Badge>
-                )}
-              </div>
-              <div className="p-4">
-                <p className="text-2xl font-bold">{plant.name}</p>
-                <p className="text-base text-gray-700 mt-2">
-                  {plant.description}
-                </p>
-                <div className="flex gap-5 mt-4 justify-between">
-                  <Button
-                    size="lg"
-                    className={`text-2xl ${
-                      needsWater ? "bg-destructive" : "bg-green-700"
-                    }`}
-                  >
-                    <Droplet />
-                    {plant.moisture}%/{plant.requiredMoisture}%
-                  </Button>
-                  <Button size="lg" className="text-xl">
-                    <Edit /> Edycja
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
+          <div className="flex flex-col gap-4 mt-4">
+            <Button type="submit" size="lg" className="text-xl">
+              Zapisz zmiany
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="text-xl"
+              onClick={handleCancel}
+            >
+              Anuluj
+            </Button>
+          </div>
+        </form>
       </div>
     </>
   );
