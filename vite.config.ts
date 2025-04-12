@@ -15,8 +15,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["apple-touch-icon.png", "icon.png"],
       manifest: {
-        name: "Moje Roślinki",
-        short_name: "Moje Roślinki",
+        name: "Bloom",
+        short_name: "Bloom",
         description: "Zarządzaj swoimi roślinami",
         theme_color: "#E0C8B1",
         icons: [
@@ -26,6 +26,7 @@ export default defineConfig({
             type: "image/png",
           },
         ],
+        display: "standalone",
       },
     }),
   ],
