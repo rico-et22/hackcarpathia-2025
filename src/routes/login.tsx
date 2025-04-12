@@ -1,23 +1,24 @@
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createFileRoute } from "@tanstack/react-router";
-import { useForm } from "node_modules/react-hook-form/dist/useForm";
-
-
+import { useForm } from "react-hook-form";
 
 export const Route = createFileRoute("/login")({
   component: Index,
 });
-
-
-
 
 function Index() {
   const form = useForm();
 
   return (
     <FormField
-    
       control={form.control}
       name="username"
       render={({ field }) => (
@@ -33,4 +34,3 @@ function Index() {
     />
   );
 }
-
