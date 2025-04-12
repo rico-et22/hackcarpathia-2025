@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -51,7 +51,7 @@ function Home() {
       <div className="mt-8 flex items-center">
         <h6 className="text-2xl">Twoje rośliny</h6>
         <Button className="ml-auto text-xl" size="lg" asChild>
-          <Link to="/newPage">
+          <Link to="/NewPage">
             <Plus className="mr-2" />
             Nowa roślina
           </Link>
@@ -83,7 +83,9 @@ function Home() {
               </div>
               <div className="p-4">
                 <p className="text-2xl font-bold">{plant.name}</p>
-                <p className="text-base text-gray-700 mt-2">{plant.description}</p>
+                <p className="text-base text-gray-700 mt-2">
+                  {plant.description}
+                </p>
                 <div className="flex gap-5 mt-4 justify-between">
                   <Button
                     size="lg"
@@ -92,7 +94,7 @@ function Home() {
                     <Droplet />
                     {plant.moisture}%/{plant.requiredMoisture}%
                   </Button>
-                  <Link to="/editPage" state={{ plant, index }}>
+                  <Link to="/editPage">
                     <Button size="lg" className="text-xl">
                       <Edit /> Edycja
                     </Button>

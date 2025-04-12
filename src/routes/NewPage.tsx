@@ -76,7 +76,7 @@ function EditPage({ index }: { index: string }) {
 
   return (
     <div className="max-w-xl mx-auto mt-10">
-      <h2 className="text-3xl font-bold mb-6">Edytuj roślinę</h2>
+      <h2 className="text-3xl font-bold mb-6">Nowa roślina</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
           <Label>Nazwa rośliny</Label>
@@ -96,7 +96,7 @@ function EditPage({ index }: { index: string }) {
             }
             placeholder="Napisz coś o tej roślinie..."
             required
-            className="border rounded p-2 w-full min-h-[100px]"
+            className="border rounded p-2 w-full min-h-[100px] bg-white"
           />
         </div>
 
@@ -119,7 +119,7 @@ function EditPage({ index }: { index: string }) {
           )}
         </div>
 
-        <div className="flex gap-4 mt-4">
+        <div className="flex flex-col gap-4 mt-4">
           <Button type="submit" size="lg" className="text-xl">
             Zapisz zmiany
           </Button>
