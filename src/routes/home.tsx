@@ -37,7 +37,7 @@ function Home() {
       <div className="flex justify-between items-center ">
         <div className="flex gap-5 items-center">
           <img src="image.webp" className="h-12" alt="User Avatar" />
-          <p className="text-2xl">Cześć, IMIĘ!</p>
+          <p className="text-2xl">Cześć, {data?.name}!</p>
         </div>
         <Button className="text-2xl" onClick={handleLogout}>
           Wyloguj <LogOut />
