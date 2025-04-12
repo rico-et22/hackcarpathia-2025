@@ -79,7 +79,7 @@ export const updatePlant = (userId: string, data: UpdatePlantRequest) => {
     }
   });
 
-  return httpClient.post<FormData, any>(
+  return httpClient.put<FormData, any>(
     `${import.meta.env.VITE_API_URL}/users/${userId}/plants`,
     formData
   );
