@@ -1,139 +1,155 @@
-import React, { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { StorePlantRequest } from "@/types/formRequest";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { getUserInfo, storePlant } from "@/api/requests";
 
 export const Route = createFileRoute("/NewPage")({
-  component: EditPage,
+  component: NewPage,
 });
 
-function EditPage({ index }: { index: string }) {
+function NewPage() {
   const navigate = useNavigate();
-  const plantIndex = parseInt(index);
+  const queryClient = useQueryClient();
 
-  const [plantName, setPlantName] = useState("");
-  const [plantDescription, setPlantDescription] = useState("");
-  const [moisture, setMoisture] = useState("");
-  const [requiredMoisture, setRequiredMoisture] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [existingImage, setExistingImage] = useState<string>("");
+  const validationSchema = z.object({
+    name: z.string().min(1, "Nazwa rośliny jest wymagana"),
+    description: z.string().optional(),
+    photo: z.instanceof(File).optional(),
+  });
 
-  useEffect(() => {
-    const plants = JSON.parse(localStorage.getItem("plants") || "[]");
-    const plant = plants[plantIndex];
+  const { data: info } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: getUserInfo,
+  });
 
-    if (plant) {
-      setPlantName(plant.name);
-      setPlantDescription(plant.description);
-      setMoisture(plant.moisture);
-      setRequiredMoisture(plant.requiredMoisture);
-      setExistingImage(plant.image);
+  const { mutate, isPending, error } = useMutation<any, any, StorePlantRequest>(
+    {
+      mutationFn: (data) => storePlant(info?.id, data),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["plants"] });
+
+        navigate({ to: "/home" });
+      },
     }
-  }, [plantIndex]);
+  );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const plants = JSON.parse(localStorage.getItem("plants") || "[]");
-
-      plants[plantIndex] = {
-        name: plantName,
-        description: plantDescription,
-        moisture,
-        requiredMoisture,
-        image: reader.result as string,
-      };
-
-      localStorage.setItem("plants", JSON.stringify(plants));
-      navigate({ to: "/home" });
-    };
-
-    if (imageFile) {
-      reader.readAsDataURL(imageFile);
-    } else {
-      // Keep existing image if not replaced
-      const plants = JSON.parse(localStorage.getItem("plants") || "[]");
-
-      plants[plantIndex] = {
-        name: plantName,
-        description: plantDescription,
-        moisture,
-        requiredMoisture,
-        image: existingImage,
-      };
-
-      localStorage.setItem("plants", JSON.stringify(plants));
-      navigate({ to: "/home" });
-    }
+  const handleSubmit = (data: StorePlantRequest) => {
+    mutate(data);
   };
 
   const handleCancel = () => {
     navigate({ to: "/home" });
   };
 
+  const form = useForm<StorePlantRequest>({
+    resolver: zodResolver(validationSchema),
+  });
+
   return (
     <div className="max-w-xl mx-auto mt-10">
       <h2 className="text-3xl font-bold mb-6">Nowa roślina</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        <div>
-          <Label>Nazwa rośliny</Label>
-          <Input
-            value={plantName}
-            onChange={(e) => setPlantName(e.target.value)}
-            required
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="flex flex-col gap-5"
+        >
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nazwa rośliny</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-
-        <div>
-          <Label>Opis</Label>
-          <textarea
-            value={plantDescription}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setPlantDescription(e.target.value)
-            }
-            placeholder="Napisz coś o tej roślinie..."
-            required
-            className="border rounded p-2 w-full min-h-[100px] bg-white"
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Opis rośliny</FormLabel>
+                <FormControl>
+                  <Textarea {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-
-
-       
-
-        <div>
-          <Label>Zdjęcie rośliny</Label>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+          <FormField
+            control={form.control}
+            name="photo"
+            render={({ field: { value, onChange, ...fieldProps } }) => (
+              <FormItem>
+                <FormLabel>Zdjęcie rośliny</FormLabel>
+                <FormControl>
+                  <Input
+                    type="file"
+                    {...fieldProps}
+                    value={undefined}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        onChange(file);
+                      }
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+                {value instanceof File && (
+                  <img
+                    src={URL.createObjectURL(value)}
+                    alt="Current"
+                    className="mt-2 h-50 object-cover rounded"
+                  />
+                )}
+              </FormItem>
+            )}
           />
-          {!imageFile && existingImage && (
-            <img
-              src={existingImage}
-              alt="Current"
-              className="mt-2 h-32 object-cover rounded"
-            />
+
+          <div className="flex flex-col gap-4 mt-4">
+            <Button
+              type="submit"
+              size="lg"
+              className="text-xl"
+              disabled={isPending}
+            >
+              Dodaj
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="text-xl"
+              onClick={handleCancel}
+            >
+              Anuluj
+            </Button>
+          </div>
+          {error && (
+            <p className="text-destructive">
+              Wystąpił błąd przy dodawaniu rośliny
+            </p>
           )}
-        </div>
-
-        <div className="flex flex-col gap-4 mt-4">
-          <Button type="submit" size="lg" className="text-xl">
-            Zapisz zmiany
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="text-xl"
-            onClick={handleCancel}
-          >
-            Anuluj
-          </Button>
-        </div>
-      </form>
+        </form>
+      </Form>
     </div>
   );
 }

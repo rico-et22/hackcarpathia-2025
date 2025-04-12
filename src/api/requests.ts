@@ -1,5 +1,9 @@
 import httpClient from "@/lib/httpClient";
-import { LoginRequest, RegisterRequest } from "@/types/formRequest";
+import {
+  LoginRequest,
+  RegisterRequest,
+  StorePlantRequest,
+} from "@/types/formRequest";
 import { Plant } from "@/types/responses";
 
 export const login = (data: LoginRequest) =>
@@ -15,7 +19,7 @@ export const login = (data: LoginRequest) =>
 export const register = (data: RegisterRequest) =>
   httpClient
     .post<
-    RegisterRequest,
+      RegisterRequest,
       any
     >(`${import.meta.env.VITE_API_URL}/auth/register`, { ...data })
     .then((res) => ({
@@ -39,3 +43,19 @@ export const getUserPlants = (userId: string) =>
   httpClient
     .get<void, any>(`${import.meta.env.VITE_API_URL}/users/${userId}/plants`)
     .then((res) => res.data.data as Plant[]);
+
+export const storePlant = (userId: string, data: StorePlantRequest) => {
+  const formData = new FormData();
+  
+  // Convert data to FormData
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      formData.append(key, value instanceof File ? value : value.toString());
+    }
+  });
+  
+  return httpClient.post<FormData, any>(
+    `${import.meta.env.VITE_API_URL}/users/${userId}/plants`,
+    formData
+  );
+};

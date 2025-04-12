@@ -1,11 +1,11 @@
-const http = require("http"); // or 'http' if your dev server is not using HTTPS
+const https = require("https"); // or 'http' if your dev server is not using HTTPS
 const fs = require("fs");
 const path = require("path");
 
-const url = "http://192.168.0.2/api/types"; // Your Laravel endpoint
+const url = "https://hackathon-api-azure.vercel.app/api/api/types"; // Your Laravel endpoint
 const outputPath = path.resolve(__dirname, "./src/types/formRequest.ts");
 
-http
+https
   .get(url, (res) => {
     if (res.statusCode !== 200) {
       console.error(`Failed to fetch file. Status code: ${res.statusCode}`);

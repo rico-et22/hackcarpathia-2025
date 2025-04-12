@@ -64,7 +64,7 @@ function Home() {
           >
             <div className="relative w-full mb-auto">
               <img
-                src="IMG_0484.jpeg"
+                src={plant.photo}
                 className="object-cover h-70 w-full rounded-t-xl"
               />
               {plant.current_humidity < plant.expected_humidity && (

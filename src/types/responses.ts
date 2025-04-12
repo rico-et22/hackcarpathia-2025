@@ -21,4 +21,5 @@ export interface Plant {
   category: Category;
   expected_humidity: number;
   current_humidity: number;
+  photo: string;
 }
