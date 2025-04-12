@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import "./index.css";
-// @ts-expect-error no types
-import "@fontsource/baloo-thambi-2";
+import "@fontsource/baloo-thambi-2/400.css";
+import "@fontsource/baloo-thambi-2/700.css";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";

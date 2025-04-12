@@ -1,7 +1,8 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { createFileRoute } from "@tanstack/react-router";
-import { Droplet, Edit, Leaf } from "lucide-react";
+import { Droplet, Edit, LogOut, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
   component: Home,
@@ -12,22 +13,58 @@ function Home() {
     <>
       <div className="flex justify-between items-center">
         <div className="flex gap-5 items-center">
-          <img src="icon.png" className="h-12" />
+          <img src="image.webp" className="h-12" />
           <p className="text-2xl">Cześć, IMIĘ!</p>
         </div>
-        <Button className="text-2xl">Wyloguj</Button>
+        <Button className="text-2xl">
+          Wyloguj <LogOut />
+        </Button>
       </div>
-      <div className="mt-8">
-        <Card className="flex flex-row gap-5 justify-center">
-          <Leaf />
-          <p className="text-2xl">Roślina</p>
-          <p className="text-2xl">Podlej!</p>
-          <Button size="lg">
-            <Droplet />
+      <div className="mt-8 flex flex-col gap-4">
+        <div className="flex items-center">
+          <h6 className="text-2xl">Twoje rośliny</h6>
+          <Button className="ml-auto text-xl" size="lg">
+            <Plus />
+            Nowa roślina
           </Button>
-          <Button size="lg">
-            <Edit />
-          </Button>
+        </div>
+        <Card className="flex gap-5 justify-center p-0 bg-red-100 border-0">
+          <div className="relative w-full">
+            <img src="IMG_0484.jpeg" className="object-cover h-70 w-full rounded-t-xl" />
+            <Badge
+              variant="destructive"
+              className="absolute -bottom-4.5 right-4.5"
+            >
+              😭 Podlej mnie!
+            </Badge>
+          </div>
+          <div className="p-4">
+            <p className="text-3xl font-bold">Fiołek</p>
+            <div className="flex gap-5 mt-2 justify-between">
+              <Button size="lg" className="bg-destructive text-2xl">
+                <Droplet /> 20%/30%
+              </Button>
+              <Button size="lg" className="text-2xl">
+                <Edit /> Edycja
+              </Button>
+            </div>
+          </div>
+        </Card>
+        <Card className="flex gap-5 justify-center p-0 bg-teal-50 border-0">
+          <div className="relative w-full">
+            <img src="IMG_0484.jpeg" className="object-cover h-70 w-full rounded-t-xl" />
+          </div>
+          <div className="p-4">
+            <p className="text-3xl font-bold">Fiołek</p>
+            <div className="flex gap-5 mt-2 justify-between">
+              <Button size="lg" className="bg-green-700 text-2xl">
+                <Droplet /> 70%/30%
+              </Button>
+              <Button size="lg" className="text-2xl">
+                <Edit /> Edycja
+              </Button>
+            </div>
+          </div>
         </Card>
       </div>
     </>
