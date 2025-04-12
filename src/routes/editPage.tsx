@@ -17,6 +17,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { getUserInfo, getUserPlantById, updatePlant } from "@/api/requests";
 import { useEffect } from "react";
+import { BluetoothConnected } from "lucide-react";
 
 export const Route = createFileRoute("/editPage")({
   component: EditPage,
