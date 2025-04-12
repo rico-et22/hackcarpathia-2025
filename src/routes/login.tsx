@@ -27,17 +27,17 @@ function Index() {
     <><div className="max-w-[500px] mx-auto">
 
       <div className="max-w-[300px] mx-auto">
-        <img src="image.png" alt="" className="w-[50%] mx-auto block" />
+        <img src="image.webp" alt="" className="w-[50%] mx-auto block font-bold" />
 
         <div className="text-center">
 
-          <h1 className="mb-[50px]">BLOOM</h1>
-          <h2>
-            Planuj swój ogród
-          </h2>
-          <h2 className="mb-[50px]">
-            Oszczędzaj wodę
-          </h2 >
+          <h1 className="text-4xl mb-[50px] font-bold" >BLOOM</h1>
+          <h1 className="text-2xl text=[#000000] font-bold">
+            Planuj swój domowy ogród
+          </h1>
+          <h1 className="text-2xl mb-[50px] text-[#5D7948] font-bold">
+  Oszczędzaj wodę
+</h1>
 
         </div>
 
