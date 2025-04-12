@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Droplet, Edit, LogOut, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
@@ -47,7 +50,6 @@ function Home() {
           Wyloguj <LogOut />
         </Button>
       </div>
-
       <div className="mt-8 flex items-center">
         <h6 className="text-2xl">Twoje rośliny</h6>
         <Button className="ml-auto text-xl" size="lg" asChild>
@@ -57,53 +59,53 @@ function Home() {
           </Link>
         </Button>
       </div>
-
-      <div className="mt-4 flex flex-col md:flex-row flex-wrap gap-4">
-        {plants.map((plant, index) => {
-          const moisture = parseInt(plant.moisture);
-          const required = parseInt(plant.requiredMoisture);
-          const needsWater = moisture < required;
-
-          return (
-            <Card key={index} className="flex flex-col p-0 w-full md:w-[300px]">
-              <div className="relative w-full">
-                <img
-                  src={plant.image}
-                  className="object-cover h-60 w-full rounded-t-xl"
-                  alt={`Zdjęcie ${plant.name}`}
-                />
-                {needsWater && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute -bottom-4.5 right-4.5"
-                  >
-                    😭 Podlej mnie!
-                  </Badge>
-                )}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {plants?.map((plant) => (
+          <Card
+            key={plant.id}
+            className={cn("flex gap-5 justify-center p-0 border-0", {
+              " bg-red-100 ": plant.current_humidity < plant.expected_humidity,
+              " bg-green-100 ":
+                plant.current_humidity >= plant.expected_humidity,
+            })}
+          >
+            <div className="relative w-full mb-auto">
+              <img
+                src="IMG_0484.jpeg"
+                className="object-cover h-70 w-full rounded-t-xl"
+              />
+              {plant.current_humidity < plant.expected_humidity && (
+                <Badge
+                  variant="destructive"
+                  className="absolute -bottom-4.5 right-4.5"
+                >
+                  😭 Podlej mnie!
+                </Badge>
+              )}
+            </div>
+            <div className="p-4">
+              <p className="text-3xl font-bold">{plant.name}</p>
+              <p className="text-wrap">{plant.description}</p>
+              <div className="flex gap-5 mt-2 justify-between">
+                <Button
+                  size="lg"
+                  className={cn("text-2xl", {
+                    "bg-destructive":
+                      plant.current_humidity < plant.expected_humidity,
+                    "bg-green-500":
+                      plant.current_humidity >= plant.expected_humidity,
+                  })}
+                >
+                  <Droplet /> {plant.current_humidity}%/
+                  {plant.expected_humidity}%
+                </Button>
+                <Button size="lg" className="text-2xl">
+                  <Edit /> Edycja
+                </Button>
               </div>
-              <div className="p-4">
-                <p className="text-2xl font-bold">{plant.name}</p>
-                <p className="text-base text-gray-700 mt-2">
-                  {plant.description}
-                </p>
-                <div className="flex gap-5 mt-4 justify-between">
-                  <Button
-                    size="lg"
-                    className={`text-2xl ${needsWater ? "bg-destructive" : "bg-green-700"}`}
-                  >
-                    <Droplet />
-                    {plant.moisture}%/{plant.requiredMoisture}%
-                  </Button>
-                  <Link to="/editPage">
-                    <Button size="lg" className="text-xl">
-                      <Edit /> Edycja
-                    </Button>
-                  </Link>
-                </div>
-              </div>
-            </Card>
-          );
-        })}
+            </div>
+          </Card>
+        ))}
       </div>
     </>
   );

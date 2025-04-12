@@ -19,4 +19,6 @@ export interface Plant {
   created_at: string; // ISO formatted date string
   updated_at: string; // ISO formatted date string
   category: Category;
+  expected_humidity: number;
+  current_humidity: number;
 }
