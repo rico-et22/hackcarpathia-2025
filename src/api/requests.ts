@@ -1,5 +1,5 @@
 import httpClient from "@/lib/httpClient";
-import { LoginRequest } from "@/types/formRequest";
+import { LoginRequest, RegisterRequest } from "@/types/formRequest";
 import { Plant } from "@/types/responses";
 
 export const login = (data: LoginRequest) =>
@@ -8,6 +8,16 @@ export const login = (data: LoginRequest) =>
       LoginRequest,
       any
     >(`${import.meta.env.VITE_API_URL}/auth/login`, { ...data })
+    .then((res) => ({
+      token: res.data.data.token,
+    }));
+
+export const register = (data: RegisterRequest) =>
+  httpClient
+    .post<
+    RegisterRequest,
+      any
+    >(`${import.meta.env.VITE_API_URL}/auth/register`, { ...data })
     .then((res) => ({
       token: res.data.data.token,
     }));

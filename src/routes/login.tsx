@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
 import { LoginRequest } from "@/types/formRequest";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -107,6 +107,16 @@ function Index() {
             {error && (
               <p className="text-destructive">Nie znaleziono użytkownika</p>
             )}
+            <Link to="/register">
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full text-2xl"
+                variant="outline"
+              >
+                Zarejestruj
+              </Button>
+            </Link>
           </form>
         </Form>
       </div>
