@@ -8,7 +8,7 @@ const RootRoute = () => {
   const pwaInstallRef = useRef<PWAInstallElement>(null);
 
   return (
-    <div className="max-w-[500px] mx-auto p-4">
+    <div className="p-4">
       <Outlet />
       <TanStackRouterDevtools />
       <PWAInstall

@@ -11,7 +11,7 @@ export const Route = createFileRoute("/home")({
 function Home() {
   return (
     <>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center ">
         <div className="flex gap-5 items-center">
           <img src="image.webp" className="h-12" />
           <p className="text-2xl">Cześć, IMIĘ!</p>
@@ -19,15 +19,17 @@ function Home() {
         <Button className="text-2xl">
           Wyloguj <LogOut />
         </Button>
+
       </div>
-      <div className="mt-8 flex flex-col gap-4">
-        <div className="flex items-center">
+      <div className="mt-8 flex items-center ">
           <h6 className="text-2xl">Twoje rośliny</h6>
           <Button className="ml-auto text-xl" size="lg">
             <Plus />
             Nowa roślina
           </Button>
         </div>
+      <div className="mt-4 flex flex-col md:flex-row flex-wrap gap-4">
+        
         <Card className="flex gap-5 justify-center p-0 bg-red-100 border-0">
           <div className="relative w-full">
             <img src="IMG_0484.jpeg" className="object-cover h-70 w-full rounded-t-xl" />
@@ -53,6 +55,7 @@ function Home() {
         <Card className="flex gap-5 justify-center p-0 bg-teal-50 border-0">
           <div className="relative w-full">
             <img src="IMG_0484.jpeg" className="object-cover h-70 w-full rounded-t-xl" />
+            
           </div>
           <div className="p-4">
             <p className="text-3xl font-bold">Fiołek</p>
