@@ -41,11 +41,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-.root{
-  margin-top: max-w-500px, mx-auto;
-  max-width: 500px;
-  
-}
+
 
 :root {
   --radius: 0.625rem;
