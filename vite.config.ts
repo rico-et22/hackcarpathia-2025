@@ -18,7 +18,7 @@ export default defineConfig({
         name: "Bloom",
         short_name: "Bloom",
         description: "Zarządzaj swoimi roślinami",
-        theme_color: "#E0C8B1",
+        theme_color: "#f5ebe4",
         icons: [
           {
             src: "icon.png",
