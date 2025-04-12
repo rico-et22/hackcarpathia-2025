@@ -41,7 +41,6 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-
 :root {
   --radius: 0.625rem;
   --background: #F9E0CD;
@@ -117,5 +116,18 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family:
+      "Baloo Thambi 2",
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Helvetica,
+      Arial,
+      sans-serif,
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol";
   }
 }
