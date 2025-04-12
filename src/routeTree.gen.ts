@@ -15,6 +15,7 @@ import { Route as RegisterImport } from './routes/register'
 import { Route as LoginImport } from './routes/login'
 import { Route as HomeImport } from './routes/home'
 import { Route as EditPageImport } from './routes/editPage'
+import { Route as NewPageImport } from './routes/NewPage'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
@@ -43,6 +44,12 @@ const EditPageRoute = EditPageImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const NewPageRoute = NewPageImport.update({
+  id: '/NewPage',
+  path: '/NewPage',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
@@ -58,6 +65,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/NewPage': {
+      id: '/NewPage'
+      path: '/NewPage'
+      fullPath: '/NewPage'
+      preLoaderRoute: typeof NewPageImport
       parentRoute: typeof rootRoute
     }
     '/editPage': {
@@ -95,6 +109,7 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/NewPage': typeof NewPageRoute
   '/editPage': typeof EditPageRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -103,6 +118,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/NewPage': typeof NewPageRoute
   '/editPage': typeof EditPageRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -112,6 +128,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/NewPage': typeof NewPageRoute
   '/editPage': typeof EditPageRoute
   '/home': typeof HomeRoute
   '/login': typeof LoginRoute
@@ -120,15 +137,23 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/editPage' | '/home' | '/login' | '/register'
+  fullPaths: '/' | '/NewPage' | '/editPage' | '/home' | '/login' | '/register'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/editPage' | '/home' | '/login' | '/register'
-  id: '__root__' | '/' | '/editPage' | '/home' | '/login' | '/register'
+  to: '/' | '/NewPage' | '/editPage' | '/home' | '/login' | '/register'
+  id:
+    | '__root__'
+    | '/'
+    | '/NewPage'
+    | '/editPage'
+    | '/home'
+    | '/login'
+    | '/register'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  NewPageRoute: typeof NewPageRoute
   EditPageRoute: typeof EditPageRoute
   HomeRoute: typeof HomeRoute
   LoginRoute: typeof LoginRoute
@@ -137,6 +162,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  NewPageRoute: NewPageRoute,
   EditPageRoute: EditPageRoute,
   HomeRoute: HomeRoute,
   LoginRoute: LoginRoute,
@@ -154,6 +180,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/NewPage",
         "/editPage",
         "/home",
         "/login",
@@ -162,6 +189,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/NewPage": {
+      "filePath": "NewPage.tsx"
     },
     "/editPage": {
       "filePath": "editPage.tsx"

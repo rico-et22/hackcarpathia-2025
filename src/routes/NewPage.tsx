@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export const Route = createFileRoute("/editPage")({
+export const Route = createFileRoute("/NewPage")({
   component: EditPage,
 });
 
-function EditPage() {
+function EditPage({ index }: { index: string }) {
   const navigate = useNavigate();
-  const { index } = useParams({ strict: false }); // this gets the index from the URL
   const plantIndex = parseInt(index);
 
   const [plantName, setPlantName] = useState("");
   const [plantDescription, setPlantDescription] = useState("");
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [existingImage, setExistingImage] = useState<string>("");
   const [moisture, setMoisture] = useState("");
   const [requiredMoisture, setRequiredMoisture] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [existingImage, setExistingImage] = useState<string>("");
 
   useEffect(() => {
     const plants = JSON.parse(localStorage.getItem("plants") || "[]");
@@ -35,15 +34,17 @@ function EditPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const plants = JSON.parse(localStorage.getItem("plants") || "[]");
 
-    const updatePlant = (image: string) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const plants = JSON.parse(localStorage.getItem("plants") || "[]");
+
       plants[plantIndex] = {
         name: plantName,
         description: plantDescription,
         moisture,
         requiredMoisture,
-        image,
+        image: reader.result as string,
       };
 
       localStorage.setItem("plants", JSON.stringify(plants));
@@ -51,13 +52,21 @@ function EditPage() {
     };
 
     if (imageFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        updatePlant(reader.result as string);
-      };
       reader.readAsDataURL(imageFile);
     } else {
-      updatePlant(existingImage);
+      // Keep existing image if not replaced
+      const plants = JSON.parse(localStorage.getItem("plants") || "[]");
+
+      plants[plantIndex] = {
+        name: plantName,
+        description: plantDescription,
+        moisture,
+        requiredMoisture,
+        image: existingImage,
+      };
+
+      localStorage.setItem("plants", JSON.stringify(plants));
+      navigate({ to: "/home" });
     }
   };
 
@@ -82,16 +91,17 @@ function EditPage() {
           <Label>Opis</Label>
           <textarea
             value={plantDescription}
-            onChange={(e) => setPlantDescription(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setPlantDescription(e.target.value)
+            }
             placeholder="Napisz coś o tej roślinie..."
             required
             className="border rounded p-2 w-full min-h-[100px]"
           />
         </div>
-        <Button className="text-2xl">
-          Wyloguj <LogOut />
-        </Button>
-      </div>
+
+
+       
 
         <div>
           <Label>Zdjęcie rośliny</Label>
@@ -103,7 +113,7 @@ function EditPage() {
           {!imageFile && existingImage && (
             <img
               src={existingImage}
-              alt="Obecne zdjęcie"
+              alt="Current"
               className="mt-2 h-32 object-cover rounded"
             />
           )}

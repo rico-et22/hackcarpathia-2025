@@ -1,104 +1,107 @@
-import { getUserInfo, getUserPlants, logout } from "@/api/requests";
+import React, { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Droplet, Edit, LogOut, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
   component: Home,
 });
 
+type Plant = {
+  name: string;
+  description: string;
+  image: string;
+  moisture: string;
+  requiredMoisture: string;
+};
+
 function Home() {
-  const navigate = useNavigate();
-  const handleLogout = async () => {
-    await logout();
-    localStorage.removeItem(ACCESS_TOKEN_ITEM);
-    navigate({ to: "/login" });
+  const [plants, setPlants] = useState<Plant[]>([]);
+
+  const loadPlants = () => {
+    const saved = localStorage.getItem("plants");
+    if (saved) {
+      setPlants(JSON.parse(saved));
+    }
   };
 
-  const { data } = useQuery({
-    queryKey: ["userInfo"],
-    queryFn: getUserInfo,
-  });
+  useEffect(() => {
+    loadPlants(); // Load once on mount
+    window.addEventListener("focus", loadPlants); // Reload on tab focus
 
-  const { data: plants } = useQuery({
-    queryKey: ["plants"],
-    queryFn: () => getUserPlants(data?.id),
-    enabled: !!data?.id,
-  });
+    return () => {
+      window.removeEventListener("focus", loadPlants);
+    };
+  }, []);
 
   return (
     <>
       <div className="flex justify-between items-center ">
         <div className="flex gap-5 items-center">
-          <img src="image.webp" className="h-12" />
-          <p className="text-2xl">Cześć, {data?.name}!</p>
+          <img src="image.webp" className="h-12" alt="User Avatar" />
+          <p className="text-2xl">Cześć, IMIĘ!</p>
         </div>
-        <Button className="text-2xl" onClick={handleLogout}>
+        <Button className="text-2xl">
           Wyloguj <LogOut />
         </Button>
       </div>
-      <div className="mt-8 flex items-center ">
+
+      <div className="mt-8 flex items-center">
         <h6 className="text-2xl">Twoje rośliny</h6>
-        <Button className="ml-auto text-xl" size="lg">
-          <Plus />
-          Nowa roślina
+        <Button className="ml-auto text-xl" size="lg" asChild>
+          <Link to="/newPage">
+            <Plus className="mr-2" />
+            Nowa roślina
+          </Link>
         </Button>
       </div>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {plants?.map((plant) => (
-          <Card
-            key={plant.id}
-            className="flex gap-5 justify-center p-0 bg-red-100 border-0"
-          >
-            <div className="relative w-full mb-auto">
-              <img
-                src="IMG_0484.jpeg"
-                className="object-cover h-70 w-full rounded-t-xl"
-              />
-              <Badge
-                variant="destructive"
-                className="absolute -bottom-4.5 right-4.5"
-              >
-                😭 Podlej mnie!
-              </Badge>
-            </div>
-            <div className="p-4">
-              <p className="text-3xl font-bold">{plant.name}</p>
-              <p className="text-wrap">{plant.description}</p>
-              <div className="flex gap-5 mt-2 justify-between">
-                <Button size="lg" className="bg-destructive text-2xl">
-                  <Droplet /> 20%/30%
-                </Button>
-                <Button size="lg" className="text-2xl">
-                  <Edit /> Edycja
-                </Button>
+
+      <div className="mt-4 flex flex-col md:flex-row flex-wrap gap-4">
+        {plants.map((plant, index) => {
+          const moisture = parseInt(plant.moisture);
+          const required = parseInt(plant.requiredMoisture);
+          const needsWater = moisture < required;
+
+          return (
+            <Card key={index} className="flex flex-col p-0 w-full md:w-[300px]">
+              <div className="relative w-full">
+                <img
+                  src={plant.image}
+                  className="object-cover h-60 w-full rounded-t-xl"
+                  alt={`Zdjęcie ${plant.name}`}
+                />
+                {needsWater && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -bottom-4.5 right-4.5"
+                  >
+                    😭 Podlej mnie!
+                  </Badge>
+                )}
               </div>
-            </div>
-          </Card>
-        ))}
-        <Card className="flex gap-5 justify-center p-0 bg-teal-50 border-0">
-          <div className="relative w-full">
-            <img
-              src="IMG_0484.jpeg"
-              className="object-cover h-70 w-full rounded-t-xl"
-            />
-          </div>
-          <div className="p-4">
-            <p className="text-3xl font-bold">Fiołek</p>
-            <div className="flex gap-5 mt-2 justify-between">
-              <Button size="lg" className="bg-green-700 text-2xl">
-                <Droplet /> 70%/30%
-              </Button>
-              <Button size="lg" className="text-2xl">
-                <Edit /> Edycja
-              </Button>
-            </div>
-          </div>
-        </Card>
+              <div className="p-4">
+                <p className="text-2xl font-bold">{plant.name}</p>
+                <p className="text-base text-gray-700 mt-2">{plant.description}</p>
+                <div className="flex gap-5 mt-4 justify-between">
+                  <Button
+                    size="lg"
+                    className={`text-2xl ${needsWater ? "bg-destructive" : "bg-green-700"}`}
+                  >
+                    <Droplet />
+                    {plant.moisture}%/{plant.requiredMoisture}%
+                  </Button>
+                  <Link to="/editPage" state={{ plant, index }}>
+                    <Button size="lg" className="text-xl">
+                      <Edit /> Edycja
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </>
   );
