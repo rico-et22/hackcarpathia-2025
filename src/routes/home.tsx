@@ -1,43 +1,36 @@
-import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Droplet, Edit, LogOut, Plus } from "lucide-react";
+import { getUserInfo, getUserPlants, logout } from "@/api/requests";
+import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/home")({
   component: Home,
 });
 
-type Plant = {
-  name: string;
-  description: string;
-  image: string;
-  moisture: string;
-  requiredMoisture: string;
-};
-
 function Home() {
-  const [plants, setPlants] = useState<Plant[]>([]);
-
-  const loadPlants = () => {
-    const saved = localStorage.getItem("plants");
-    if (saved) {
-      setPlants(JSON.parse(saved));
-    }
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await logout();
+    localStorage.removeItem(ACCESS_TOKEN_ITEM);
+    navigate({ to: "/login" });
   };
 
-  useEffect(() => {
-    loadPlants(); // Load once on mount
-    window.addEventListener("focus", loadPlants); // Reload on tab focus
+  const { data } = useQuery({
+    queryKey: ["userInfo"],
+    queryFn: getUserInfo,
+  });
 
-    return () => {
-      window.removeEventListener("focus", loadPlants);
-    };
-  }, []);
+  const { data: plants } = useQuery({
+    queryKey: ["plants"],
+    queryFn: () => getUserPlants(data?.id),
+    enabled: !!data?.id,
+    refetchInterval: 1000 * 10,
+  });
 
   return (
     <>
@@ -46,18 +39,18 @@ function Home() {
           <img src="image.webp" className="h-12" alt="User Avatar" />
           <p className="text-2xl">Cześć, IMIĘ!</p>
         </div>
-        <Button className="text-2xl">
+        <Button className="text-2xl" onClick={handleLogout}>
           Wyloguj <LogOut />
         </Button>
       </div>
       <div className="mt-8 flex items-center">
         <h6 className="text-2xl">Twoje rośliny</h6>
-        <Button className="ml-auto text-xl" size="lg" asChild>
-          <Link to="/NewPage">
+        <Link to="/NewPage" className="ml-auto">
+          <Button className="text-xl" size="lg">
             <Plus className="mr-2" />
             Nowa roślina
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {plants?.map((plant) => (
