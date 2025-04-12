@@ -151,6 +151,11 @@ function EditPage() {
             )}
           />
 
+          <div className="flex items-center gap-2 mt-4 text-2xl">
+            <BluetoothConnected />
+            <p>Połączono z czujnikiem</p>
+          </div>
+
           <div className="flex flex-col gap-4 mt-4">
             <Button
               type="submit"

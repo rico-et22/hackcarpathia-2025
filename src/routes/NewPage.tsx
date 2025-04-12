@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { getUserInfo, storePlant } from "@/api/requests";
+import { BluetoothConnected, BluetoothSearching } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/NewPage")({
   component: NewPage,
@@ -58,6 +60,13 @@ function NewPage() {
   const form = useForm<StorePlantRequest>({
     resolver: zodResolver(validationSchema),
   });
+
+  const [connected, setConnected] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setConnected(true);
+    }, 3000);
+  }, []);
 
   return (
     <div className="max-w-xl mx-auto mt-10">
@@ -124,12 +133,17 @@ function NewPage() {
             )}
           />
 
+          <div className="flex items-center gap-2 mt-4 text-2xl">
+            {connected ? <BluetoothConnected /> : <BluetoothSearching />}
+            <p>{connected ? "Połączono z czujnikiem" : "Łączę z czujnikiem"}</p>
+          </div>
+
           <div className="flex flex-col gap-4 mt-4">
             <Button
               type="submit"
               size="lg"
               className="text-xl"
-              disabled={isPending}
+              disabled={isPending || !connected}
             >
               Dodaj
             </Button>
