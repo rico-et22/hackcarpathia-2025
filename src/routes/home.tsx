@@ -92,7 +92,11 @@ function Home() {
                   <Droplet /> {plant.current_humidity}%/
                   {plant.expected_humidity}%
                 </Button>
-                <Button size="lg" className="text-2xl">
+                <Button
+                  size="lg"
+                  className="text-2xl"
+                  onClick={() => navigate({ to: `/editPage?id=${plant.id}` })}
+                >
                   <Edit /> Edycja
                 </Button>
               </div>

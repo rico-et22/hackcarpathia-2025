@@ -3,6 +3,7 @@ import {
   LoginRequest,
   RegisterRequest,
   StorePlantRequest,
+  UpdatePlantRequest,
 } from "@/types/formRequest";
 import { Plant } from "@/types/responses";
 
@@ -44,16 +45,40 @@ export const getUserPlants = (userId: string) =>
     .get<void, any>(`${import.meta.env.VITE_API_URL}/users/${userId}/plants`)
     .then((res) => res.data.data as Plant[]);
 
+export const getUserPlantById = (userId: string, id: string) =>
+  httpClient
+    .get<
+      void,
+      any
+    >(`${import.meta.env.VITE_API_URL}/users/${userId}/plants/${id}`)
+    .then((res) => res.data.data as Plant);
+
 export const storePlant = (userId: string, data: StorePlantRequest) => {
   const formData = new FormData();
-  
+
   // Convert data to FormData
   Object.entries(data).forEach(([key, value]) => {
     if (value !== null && value !== undefined) {
       formData.append(key, value instanceof File ? value : value.toString());
     }
   });
-  
+
+  return httpClient.post<FormData, any>(
+    `${import.meta.env.VITE_API_URL}/users/${userId}/plants`,
+    formData
+  );
+};
+
+export const updatePlant = (userId: string, data: UpdatePlantRequest) => {
+  const formData = new FormData();
+
+  // Convert data to FormData
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== null && value !== undefined) {
+      formData.append(key, value instanceof File ? value : value.toString());
+    }
+  });
+
   return httpClient.post<FormData, any>(
     `${import.meta.env.VITE_API_URL}/users/${userId}/plants`,
     formData
