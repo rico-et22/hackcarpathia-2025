@@ -9,7 +9,7 @@ import {
   Form,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ACCESS_TOKEN_COOKIE } from "@/lib/constants";
+import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
 import { LoginRequest } from "@/types/formRequest";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -29,7 +29,7 @@ function Index() {
   const { mutate, isPending, error } = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      localStorage.setItem(ACCESS_TOKEN_COOKIE, data.token);
+      localStorage.setItem(ACCESS_TOKEN_ITEM, data.token);
       navigate({ to: "/home" });
     },
   });

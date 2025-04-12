@@ -1,8 +1,9 @@
+import httpClient from "@/lib/httpClient";
 import { LoginRequest } from "@/types/formRequest";
-import axios from "axios";
+import { Plant } from "@/types/responses";
 
 export const login = (data: LoginRequest) =>
-  axios
+  httpClient
     .post<
       LoginRequest,
       any
@@ -10,3 +11,21 @@ export const login = (data: LoginRequest) =>
     .then((res) => ({
       token: res.data.data.token,
     }));
+
+export const logout = () =>
+  httpClient.post<LoginRequest, any>(
+    `${import.meta.env.VITE_API_URL}/auth/logout`
+  );
+
+export const getUserInfo = () =>
+  httpClient
+    .get<void, any>(`${import.meta.env.VITE_API_URL}/user`)
+    .then((res) => ({
+      name: res.data.name,
+      id: res.data.id,
+    }));
+
+export const getUserPlants = (userId: string) =>
+  httpClient
+    .get<void, any>(`${import.meta.env.VITE_API_URL}/users/${userId}/plants`)
+    .then((res) => res.data.data as Plant[]);

@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_COOKIE } from "@/lib/constants";
+import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -6,6 +6,6 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  if (localStorage.getItem(ACCESS_TOKEN_COOKIE)) return <Navigate to="/home" />;
+  if (localStorage.getItem(ACCESS_TOKEN_ITEM)) return <Navigate to="/home" />;
   return <Navigate to="/login" />;
 }
