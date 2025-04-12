@@ -14,7 +14,7 @@ An application that allows seniors to manage their "home garden" (plants inside 
 ## Setup Guide
 Install Dependencies
 ```js
-npm install 
+pnpm install 
 ```
 
 Install TypeScript globally
