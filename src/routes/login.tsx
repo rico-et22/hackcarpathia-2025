@@ -145,7 +145,7 @@ function Index() {
               disabled={isPending}
             >
               <svg
-                class="mr-3"
+                className="mr-3"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 48 48"
                 width="25px"
