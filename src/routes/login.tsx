@@ -97,7 +97,11 @@ function Index() {
               )}
             />
             <Button
-              type="submit"
+              type="button"
+              onClick={() => {
+                Notification.requestPermission();
+                form.handleSubmit(onSubmit);
+              }}
               size="lg"
               className="w-full text-2xl"
               disabled={isPending}
