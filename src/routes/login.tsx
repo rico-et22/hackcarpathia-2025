@@ -1,4 +1,4 @@
-import { login } from "@/api/requests";
+import { login, loginGoogle } from "@/api/requests";
 import { Button } from "@/components/ui/button";
 import {
   FormField,
@@ -11,10 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
 import { LoginRequest } from "@/types/formRequest";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useGoogleLogin } from "@react-oauth/google";
 
 export const Route = createFileRoute("/login")({
   component: Index,
@@ -25,6 +26,7 @@ function Index() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const queryClient = useQueryClient();
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: login,
@@ -34,9 +36,32 @@ function Index() {
     },
   });
 
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: (codeResponse) => {
+      confirmGoogleLogin({ token: codeResponse.access_token });
+    },
+  });
+
+  const { mutate: confirmGoogleLogin } = useMutation<
+    any,
+    any,
+    { token: string }
+  >({
+    mutationFn: (data) => loginGoogle(data.token),
+    onSuccess: (data) => {
+      localStorage.setItem(ACCESS_TOKEN_ITEM, data.token);
+      navigate({ to: "/home" });
+    },
+  });
+
   const onSubmit = (data: LoginRequest) => {
     mutate(data);
   };
+
+  useEffect(() => {
+    queryClient.resetQueries();
+  }, []);
+
   return (
     <>
       <div className="max-w-[500px] mx-auto">
@@ -107,6 +132,18 @@ function Index() {
               disabled={isPending}
             >
               Zaloguj
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                Notification.requestPermission();
+                loginWithGoogle();
+              }}
+              size="lg"
+              className="w-full text-2xl"
+              disabled={isPending}
+            >
+              Zaloguj z Google
             </Button>
             {error && (
               <p className="text-destructive">Nie znaleziono użytkownika</p>

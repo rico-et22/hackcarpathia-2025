@@ -17,6 +17,16 @@ export const login = (data: LoginRequest) =>
       token: res.data.data.token,
     }));
 
+export const loginGoogle = (token: string) =>
+  httpClient
+    .post(`${import.meta.env.VITE_API_URL}/auth/login`, {
+      access_token: token,
+      provider: "google",
+    })
+    .then((res) => ({
+      token: res.data.data.token,
+    }));
+
 export const register = (data: RegisterRequest) =>
   httpClient
     .post<
