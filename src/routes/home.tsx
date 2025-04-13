@@ -7,6 +7,7 @@ import { Droplet, Edit, LogOut, Plus } from "lucide-react";
 import { getUserInfo, getUserPlants, logout } from "@/api/requests";
 import { ACCESS_TOKEN_ITEM } from "@/lib/constants";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/home")({
   component: Home,
@@ -30,6 +31,34 @@ function Home() {
     queryFn: () => getUserPlants(data?.id),
     enabled: !!data?.id,
     refetchInterval: 1000 * 10,
+  });
+
+  // if any plant is not watered, show a notification
+  useEffect(() => {
+    if (
+      plants?.some((plant) => plant.current_humidity < plant.expected_humidity)
+    ) {
+      if ("Notification" in window) {
+        const showNotification = () => {
+          new Notification("Bloom", {
+            body: "Niektóre rośliny wymagają podlania!",
+          });
+        };
+
+        if (Notification.permission === "granted") {
+          showNotification();
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              showNotification();
+            }
+          });
+        }
+      } else {
+        // Fallback for browsers without notification support
+        alert("Niektóre rośliny wymagają podlania!");
+      }
+    }
   });
 
   return (
