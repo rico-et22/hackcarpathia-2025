@@ -30,7 +30,9 @@ function NewPage() {
   const validationSchema = z.object({
     name: z.string().min(1, "Nazwa rośliny jest wymagana"),
     description: z.string().optional(),
-    photo: z.instanceof(File).optional(),
+    photo: z.instanceof(File, {
+      message: "Zdjęcie rośliny jest wymagane",
+    }),
   });
 
   const { data: info } = useQuery({
@@ -111,12 +113,20 @@ function NewPage() {
                 <FormControl>
                   <Input
                     type="file"
+                    accept="image/jpeg,image/png"
                     {...fieldProps}
                     value={undefined}
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
-                        onChange(file);
+                        if (
+                          file.type === "image/jpeg" ||
+                          file.type === "image/png"
+                        ) {
+                          onChange(file);
+                        } else {
+                          alert("Tylko pliki JPG i PNG są dozwolone");
+                        }
                       }
                     }}
                   />

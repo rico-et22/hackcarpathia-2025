@@ -8,7 +8,7 @@ export type UpdatePlantRequest = {
 export type StorePlantRequest = {
     name: string;
     description?: string;
-    photo?: File;
+    photo: File;
     expected_humidity?: number;
     current_humidity?: number;
 };

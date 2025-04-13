@@ -138,6 +138,7 @@ function EditPage() {
                 <FormControl>
                   <Input
                     type="file"
+                    accept="image/jpeg,image/png"
                     {...fieldProps}
                     value={undefined}
                     onChange={(e) => {
