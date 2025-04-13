@@ -15,7 +15,11 @@ export const login = (data: LoginRequest) =>
     >(`${import.meta.env.VITE_API_URL}/auth/login`, { ...data })
     .then((res) => ({
       token: res.data.data.token,
-    }));
+    }))
+    .catch((error) => {
+      //console.log( error.message); // Log the error message to the console
+      throw new Error(error); // Throw the error so you can handle it in the component
+    });
 
 export const loginGoogle = (token: string) =>
   httpClient

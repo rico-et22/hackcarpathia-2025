@@ -46,6 +46,13 @@ function NewPage() {
 
         navigate({ to: "/home" });
       },
+      onError: (error) => {
+        console.log(error.message)
+        if(error.message === 'The photo field is required.')
+        {
+          error.message = 'Zdjęcie rośliny jest wymagane'
+        }
+      },
     }
   );
 
@@ -109,17 +116,34 @@ function NewPage() {
               <FormItem>
                 <FormLabel>Zdjęcie rośliny</FormLabel>
                 <FormControl>
-                  <Input
-                    type="file"
-                    {...fieldProps}
-                    value={undefined}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        onChange(file);
+                <Input
+                  type="file"
+                  {...fieldProps}
+                  value={undefined}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+
+                    // File validation: check type and size
+                    if (file) {
+                      // Check file type (only .jpg and .png)
+                      const validTypes = ["image/jpeg", "image/png"];
+                      if (!validTypes.includes(file.type)) {
+                        alert("Please upload a valid image file (JPG or PNG).");
+                        return;
                       }
-                    }}
-                  />
+
+                      // Check file size (max 5MB)
+                      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+                      if (file.size > maxSize) {
+                        alert("File size exceeds 5MB. Please upload a smaller image.");
+                        return;
+                      }
+
+                      // If all validations pass, pass the file to onChange
+                      onChange(file);
+                    }
+                  }}
+                />
                 </FormControl>
                 <FormMessage />
                 {value instanceof File && (
@@ -158,10 +182,8 @@ function NewPage() {
             </Button>
           </div>
           {error && (
-            <p className="text-destructive">
-              Wystąpił błąd przy dodawaniu rośliny
-            </p>
-          )}
+              <p className="text-destructive">{(error as Error).message}</p>
+            )}
         </form>
       </Form>
     </div>

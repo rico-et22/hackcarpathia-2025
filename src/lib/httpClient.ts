@@ -25,6 +25,13 @@ httpClient.interceptors.response.use(
       localStorage.removeItem(ACCESS_TOKEN_ITEM);
       window.location.href = "/login";
     }
+
+    if (error.response?.status === 422) {
+      const validationMessage = error.response?.data.message || "Nieprawidłowe dane logowania";
+      // You can throw an error or log the message for display in the UI
+      throw new Error(validationMessage);
+    }
+    
     return error;
   }
 );

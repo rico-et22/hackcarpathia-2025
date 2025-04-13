@@ -34,6 +34,13 @@ function Index() {
       localStorage.setItem(ACCESS_TOKEN_ITEM, data.token);
       navigate({ to: "/home" });
     },
+    onError(error) {
+        // console.log(error.message)
+        if(error.message === 'Error: Wrong credentials') 
+        {
+          error.message = 'Niepoprawny adres e-mail lub hasło'
+        }
+    },
   });
 
   const loginWithGoogle = useGoogleLogin({
@@ -170,7 +177,7 @@ function Index() {
               Zaloguj z Google
             </Button>
             {error && (
-              <p className="text-destructive">Nie znaleziono użytkownika</p>
+              <p className="text-destructive">{(error as Error).message}</p>
             )}
             <Link to="/register">
               <Button
