@@ -69,7 +69,11 @@ export const storePlant = (userId: string, data: StorePlantRequest) => {
   );
 };
 
-export const updatePlant = (userId: string, data: UpdatePlantRequest) => {
+export const updatePlant = (
+  userId: string,
+  id: string,
+  data: UpdatePlantRequest
+) => {
   const formData = new FormData();
 
   // Convert data to FormData
@@ -79,8 +83,8 @@ export const updatePlant = (userId: string, data: UpdatePlantRequest) => {
     }
   });
 
-  return httpClient.put<FormData, any>(
-    `${import.meta.env.VITE_API_URL}/users/${userId}/plants`,
+  return httpClient.post<FormData, any>(
+    `${import.meta.env.VITE_API_URL}/users/${userId}/plants/${id}`,
     formData
   );
 };

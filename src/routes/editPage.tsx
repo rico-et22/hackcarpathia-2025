@@ -50,7 +50,7 @@ function EditPage() {
     any,
     UpdatePlantRequest
   >({
-    mutationFn: (data) => updatePlant(info?.id, data),
+    mutationFn: (data) => updatePlant(info?.id, id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["plants"] });
 
