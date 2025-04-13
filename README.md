@@ -2,7 +2,7 @@
 ## Bloom  
 
 An application that allows seniors to manage their "home garden" (plants inside the house/apartment). The plants are equipped with humidity sensors that transmit data to the application - in case of insufficient watering, a message, or push notification.
-<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
+
 ## Sustainable Development Goals:
 1. Save water consumption
 ## Facilities for seniors:
