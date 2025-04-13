@@ -98,3 +98,9 @@ export const updatePlant = (
     formData
   );
 };
+
+export const deletePlant = (userId: string, id: string) => {
+  return httpClient.delete(
+    `${import.meta.env.VITE_API_URL}/users/${userId}/plants/${id}`
+  );
+};

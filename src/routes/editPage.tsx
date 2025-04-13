@@ -15,7 +15,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { getUserInfo, getUserPlantById, updatePlant } from "@/api/requests";
+import {
+  deletePlant,
+  getUserInfo,
+  getUserPlantById,
+  updatePlant,
+} from "@/api/requests";
 import { useEffect } from "react";
 import { BluetoothConnected } from "lucide-react";
 
@@ -51,6 +56,15 @@ function EditPage() {
     UpdatePlantRequest
   >({
     mutationFn: (data) => updatePlant(info?.id, id!, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["plants"] });
+
+      navigate({ to: "/home" });
+    },
+  });
+
+  const { mutate: handleDelete, isPending: deleting } = useMutation({
+    mutationFn: () => deletePlant(info?.id, id!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["plants"] });
 
@@ -174,6 +188,16 @@ function EditPage() {
               onClick={handleCancel}
             >
               Anuluj
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="lg"
+              className="text-xl"
+              onClick={() => handleDelete()}
+              disabled={deleting}
+            >
+              Usuń
             </Button>
           </div>
           {error && (

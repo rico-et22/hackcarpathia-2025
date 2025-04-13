@@ -150,7 +150,7 @@ function Index() {
             )}
             <Link to="/register">
               <Button
-                type="submit"
+                type="button"
                 size="lg"
                 className="w-full text-2xl"
                 variant="outline"
