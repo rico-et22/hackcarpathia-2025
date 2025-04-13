@@ -100,7 +100,7 @@ function Index() {
               type="button"
               onClick={() => {
                 Notification.requestPermission();
-                form.handleSubmit(onSubmit);
+                form.handleSubmit(onSubmit)();
               }}
               size="lg"
               className="w-full text-2xl"
